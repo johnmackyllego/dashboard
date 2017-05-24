@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Ayannah{% endblock %}
+
+{% block content %}
+<div>
+{% if user.is_authenticated %}
+    <p>
+        <table id="logfile" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Sender</th>
+                    <th>Receiver</th>
+                    <th>Message</th>
+                    <th>Date/Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for msg in message_list %}
+                <tr>
+                    <td>{{ msg.sender }}</td>
+                    <td>{{ msg.receiver }}</td>
+                    <td>{{ msg.raw }}</td>
+                    <td>{{ msg.timestamp }}</td>                    
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </p>
+{% else %}
+    <p class="alert alert-warning">
+    <span class="glyphicon glyphicon-exclamation-sign"></span>
+    <strong>Message</strong>
+        This system is for authorized personnel only. You need to enter your username and password to continue
+    </p>
+    <hr>
+    <a class="btn btn-default btn-md" href="{% url 'login' %}">Continue &raquo;</a>
+{% endif %}
+</div>
+{% endblock %}
