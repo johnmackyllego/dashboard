@@ -14,7 +14,7 @@ try:
     ))
     
     #consumer = KafkaConsumer('incoming-sms', bootstrap_servers='192.168.8.8:9092', auto_offset_reset='earliest')
-    consumer = KafkaConsumer('incoming-sms', group_id='smartmoney-acceptance', bootstrap_servers='192.168.8.7:9092')
+    consumer = KafkaConsumer('incoming-sms',bootstrap_servers='192.168.8.8:9092',auto_offset_reset="earliest")
     
     for msg in consumer:
         sms = DeserializeThriftMsg(Message(), msg.value)
