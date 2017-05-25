@@ -14,3 +14,5 @@ class MessageView(generic.ListView):
     
     def get_queryset(self):
         return Message.objects.all()
+        
+    
