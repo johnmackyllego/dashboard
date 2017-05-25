@@ -13,8 +13,22 @@ class MessageView(generic.ListView):
     query_results = Message.objects.all()
     
     def get_queryset(self):
-        return Message.objects.filter(
-            timestamp__gte = datetime.date.today()
-        ).order_by("-timestamp")
+        start_date = self.request.GET.get("datetimepicker1")
+        end_date = self.request.GET.get("datetimepicker2")
+    
+        if start_date and end_date:
+            s_date = datetime.datetime.strptime(start_date,'%Y/%m/%d %H:%M')
+            e_date = datetime.datetime.strptime(end_date,'%Y/%m/%d %H:%M')
 
-    #def post_queryset(self,request):
+            if s_date <= e_date:
+                return Message.objects.filter(
+                    timestamp__range = (s_date, e_date)
+                ).order_by("-timestamp")
+            else:
+                return Message.objects.filter(
+                    timestamp__range = (e_date, s_date)
+                ).order_by("-timestamp")
+        else:
+            return Message.objects.filter(
+                timestamp__gte = datetime.date.today()
+            ).order_by("-timestamp")

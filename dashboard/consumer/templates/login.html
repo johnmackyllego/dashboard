@@ -7,10 +7,10 @@
 {% block content %}
 
 {% if request.user.is_authenticated %}
-    {# include 'home.html' #}
+    <meta http-equiv="refresh" content="0; url={% url 'home' %}" />
 {% else %}
     <div class="col-md-4"></div>
-    <div style="margin-top:5%;"class="col-md-4">
+    <div style="margin-top:5%;" class="col-md-4">
         <form method="post">
         {% csrf_token %}
         <div class="panel panel-default">
@@ -19,7 +19,7 @@
                 {% bootstrap_form form layout='inline' %}
             </div>
             <div class="panel-footer">
-                <button class="btn btn-success btn-md"type="submit">Continue &raquo;</button>
+                <button class="btn btn-success btn-md" type="submit">Continue &raquo;</button>
             </div>
         </div>
         </form>
