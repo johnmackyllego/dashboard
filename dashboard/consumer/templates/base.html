@@ -45,24 +45,6 @@
             {% endif %}
         </div>
     </nav>
-    <div>
-        <form method="GET" class="navbar-form">
-            <div class="form-group" style = "float: left;">
-                <h5>Table shows from <strong>{{ message_list.last.timestamp }}</strong> up to <strong>{{ message_list.0.timestamp }}</strong> </h5>
-            </div>
-            <div style = "float: right;">
-                <div class="form-group">
-                    <input id="datetimepicker1"  name="datetimepicker1" type="text" class="form-control" placeholder="Start Date"/>
-                </div>
-                <div class="form-group">
-                    <input id="datetimepicker2"  name="datetimepicker2" type="text" class="form-control" placeholder="End Date"/>
-                </div>
-                <button type="submit" class="btn btn-default">
-                    <span class="glyphicon glyphicon-filter"></span>
-                    Filter
-                </button>
-            </div>
-        </form>
     </div>
     <div class="container-fluid">
         {% block content %}
