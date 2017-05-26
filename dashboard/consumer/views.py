@@ -15,7 +15,7 @@ class MessageView(generic.ListView):
     def get_queryset(self):
         start_date = self.request.GET.get("datetimepicker1")
         end_date = self.request.GET.get("datetimepicker2")
-    
+        
         if start_date and end_date:
             s_date = datetime.datetime.strptime(start_date,'%Y/%m/%d %H:%M')
             e_date = datetime.datetime.strptime(end_date,'%Y/%m/%d %H:%M')
