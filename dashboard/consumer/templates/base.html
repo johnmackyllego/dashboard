@@ -2,34 +2,26 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta http-equiv="refresh" content="60">
     <meta charset="utf-8">
-    <title>{% block title %}Admin Login{% endblock %}</title>
+    <title>{% block title %}SMARTMoney Encashment Webtool{% endblock %}</title>
     <link rel="icon" href="favicon.ico"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="{% static 'ie10-viewport-bug-workaround.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'ie-emulation-modes-warning.js' %}" />
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-    <meta http-equiv="refresh" content="60">
     <link href="{% static 'datetime/jquery.datetimepicker.css' %}" rel="stylesheet">    
-    <!-- DataTables CSS -->
     <link href="{% static 'vendor/datatables-plugins/dataTables.bootstrap.css' %}" rel="stylesheet">
-
-    <!-- DataTables Responsive CSS -->
     <link href="{% static 'vendor/datatables-responsive/dataTables.responsive.css' %}" rel="stylesheet %}">    
-    
-    </head>
+</head>
 <body>
-
     <nav class="navbar navbar-default navbar-static-top">
         <div class="container-fluid">
             <div class="navbar-header">
-            
-            <a class="navbar-brand" href="{% url 'home' %}">SMARTMoney Encashment Webtool</a>
+                <a class="navbar-brand" href="{% url 'home' %}">SMARTMoney Encashment Webtool</a>
             </div>
-
             {% if user.is_authenticated %}
             <ul class="nav navbar-nav navbar-right">
-                
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user"></span> {{ user.username }} <span class="caret"></span></a>
                     <ul class="dropdown-menu">
@@ -45,7 +37,6 @@
             {% endif %}
         </div>
     </nav>
-    </div>
     <div class="container-fluid">
         {% block content %}
         {% endblock %}
@@ -53,30 +44,22 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/bootstrap.mis.js"></script>
     <script src="{% static 'bootstrap.min.js' %}"></script>
-
-    <!-- DataTables JavaScript -->
     <script src="{% static 'vendor/datatables/js/jquery.dataTables.min.js' %}"></script>
     <script src="{% static 'vendor/datatables-plugins/dataTables.bootstrap.min.js' %}"></script>
     <script src="{% static 'vendor/datatables-responsive/dataTables.responsive.js' %}"></script>
     <script>
         var table = $('#logfile').DataTable({
                 "ordering": false,
-                "lengthChange": false,
+                "iDisplayLength": 8,
                 "order": [[ 3, "desc" ]],
                 "bStateSave": true,
                 "sDom": 'rt<"row view-filter"<"col-sm-12"<"pull-left"p><"pull-right"f><"clearfix">>><"row view-pager"<"col-sm-12"<"text-center"i>>>'
         });
-
         $('.dataTables_filter input[type="search"]').
-        attr('placeholder','Search everything in the Table ...').
         css({'height':'33px','width':'380px','display':'inline-block'});
-
     </script>
     <script src="{% static 'ie10-viewport-bug-workaround.js' %}"></script>
     <script src="{% static 'datetime/jquery.datetimepicker.full.js' %}"></script>
-    <script>
-        $("#datetimepicker1").datetimepicker();
-        $("#datetimepicker2").datetimepicker();
-    </script>
+    <script>$("#datetimepicker1").datetimepicker();$("#datetimepicker2").datetimepicker();</script>
 </body>
 </html>
