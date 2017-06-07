@@ -18,7 +18,6 @@ conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(
 			))
 
 consumer = KafkaConsumer(TOPIC,
-		     group_id=KAFKA_GROUP_ID,
 		     bootstrap_servers='{}:{}'.format(KAFKA_HOST, KAFKA_PORT),
 		     auto_offset_reset='earliest',
 		     enable_auto_commit=False)
@@ -30,17 +29,17 @@ for msg in consumer:
     sms_receiver = sms.receiver
     sms_timestamp = datetime.datetime.fromtimestamp(sms.timestamp).strftime('%Y-%m-%d %H:%M:%S')
 
-    print('================')
-    print(sms)
-
     try:
-    	query = "SELECT count(raw) FROM consumer_message where raw = '{}'".format(sms_raw)
+    	query = "SELECT count(raw) FROM consumer_message where raw = '{}';".format(sms_raw)
 	cur = conn.cursor()
 	cur.execute(query)
 	a = cur.fetchone()[0]
 	conn.commit()
+	print('======SAVED========')
+    	print(sms)
     except Exception as e:
-	print(e)
+	print('ERROR: {}'.format(e))
+	conn.rollback()
 
     if a < 1:
 	try:
