@@ -5,50 +5,53 @@ import psycopg2
 import datetime
 import os
 
-try:
-    conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(
-        os.getenv('DB_NAME', 'logfile'),
-        os.getenv('DB_USER','hmmmacky'),
-        os.getenv('DB_HOST','localhost'),
-        os.getenv('DB_PASSWORD','hmmmacky'),
-    ))
-    
-    consumer = KafkaConsumer('incoming-sms', group_id='smartmoney-acceptance',
-        bootstrap_servers='192.168.8.7:9092',auto_offset_reset="earliest")
-    
-    for msg in consumer:
-        sms = DeserializeThriftMsg(Message(), msg.value)
-        sms_raw = sms.raw
-        sms_sender = sms.sender
-        sms_receiver = sms.receiver
-        sms_timestamp = datetime.datetime.fromtimestamp(sms.timestamp).strftime('%Y-%m-%d %H:%M:%S')
-        
-        query = "SELECT count(raw) FROM consumer_message where raw = '%s'" % (sms_raw)
-        
-        cur = conn.cursor()
-        cur.execute(query)
-        a = cur.fetchone()[0]
-        conn.commit()
-        
-        if a < 1:
-            print "RAW:       ", sms.raw
-            print "SENDER:    ", sms.sender
-            print "RECEIVER:  ", sms.receiver
-            print "TIMESTAMP: ", sms_timestamp
-            print "================================================================================="
-            query = "INSERT INTO consumer_message (sender, receiver, raw, timestamp) VALUES (%s, %s, %s, %s);"
-            data = (sms_sender, sms_receiver, sms_raw, sms_timestamp)
-            cur.execute(query, data)
-            conn.commit()
-        
-        elif a >= 1:
-            print "DUPLICATE"
-            print "RAW:       ", sms.raw
-            print "SENDER:    ", sms.sender
-            print "RECEIVER:  ", sms.receiver
-            print "TIMESTAMP: ", sms_timestamp
-            print "================================================================================="
+TOPIC = os.getenv('KAFKA_TOPIC', 'incoming-sms')
+KAFKA_GROUP_ID = os.getenv('KAFKA_GROUP_ID', 'smartmoney-acceptance')
+KAFKA_HOST = os.getenv('KAFKA_HOST', '192.168.8.7')
+KAFKA_PORT = os.getenv('KAFKA_PORT', '9092')
 
-except:
-	print "Unable to connect to database"
-    
+conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(
+			os.getenv('DB_NAME', 'smsdb'),
+			os.getenv('DB_USER','postgres'),
+			os.getenv('DB_HOST','sms-db'),
+			os.getenv('DB_PASSWORD','postgres'),
+			))
+
+consumer = KafkaConsumer(TOPIC,
+		     group_id=KAFKA_GROUP_ID,
+		     bootstrap_servers='{}:{}'.format(KAFKA_HOST, KAFKA_PORT),
+		     auto_offset_reset='earliest',
+		     enable_auto_commit=False)
+
+for msg in consumer:
+    sms = DeserializeThriftMsg(Message(), msg.value)
+    sms_raw = sms.raw
+    sms_sender = sms.sender
+    sms_receiver = sms.receiver
+    sms_timestamp = datetime.datetime.fromtimestamp(sms.timestamp).strftime('%Y-%m-%d %H:%M:%S')
+
+    print('================')
+    print(sms)
+
+    try:
+    	query = "SELECT count(raw) FROM consumer_message where raw = '{}'".format(sms_raw)
+	cur = conn.cursor()
+	cur.execute(query)
+	a = cur.fetchone()[0]
+	conn.commit()
+    except Exception as e:
+	print(e)
+
+    if a < 1:
+	try:
+	    query = '''INSERT INTO consumer_message (sender, receiver, raw, timestamp) VALUES (%s, %s, %s, %s);'''
+	    data = (sms_sender, sms_receiver, sms_raw, sms_timestamp)
+	    cur.execute(query, data)
+            conn.commit()
+	    print('RAW: {}'.format(sms.raw))
+	except Exception as e:
+	    print(e)
+            print('Malformed sms: {}'.format(sms.raw))
+
+    elif a >= 1:
+	print('DUPLICATE: {}'.format(sms_raw))
