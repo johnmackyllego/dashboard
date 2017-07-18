@@ -5,11 +5,11 @@ from django.db import models
 
 # Create your models here.
 class Message(models.Model):
-    
+
     sender = models.CharField(max_length = 13)
     receiver = models.CharField(max_length = 13) 
-    raw = models.CharField(max_length = 200)
+    raw = models.TextField()
     timestamp = models.DateTimeField(max_length = 20)
-    
+
     def __unicode__(self):
         return self.sender
